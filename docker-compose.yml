@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  ###########################
+  #     ZOOKEEPER
+  ###########################
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - bigdata
+
+  ###########################
+  #     KAFKA BROKER
+  ###########################
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on: [zookeeper]
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    networks:
+      - bigdata
+
+  ###########################
+  #   KAFKA UI (Optional)
+  ###########################
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on: [kafka]
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    networks:
+      - bigdata
+
+  ###########################
+  #     KAFKA CONNECT
+  ###########################
+  connect:
+    image: confluentinc/cp-kafka-connect:7.4.0
+    depends_on: [kafka]
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka:9092
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: "connect-cluster"
+      CONNECT_CONFIG_STORAGE_TOPIC: "connect-configs"
+      CONNECT_OFFSET_STORAGE_TOPIC: "connect-offsets"
+      CONNECT_STATUS_STORAGE_TOPIC: "connect-status"
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_PLUGIN_PATH: "/usr/share/java"
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./connect-plugins:/usr/share/java
+    networks:
+      - bigdata
+
+  ###########################
+  #     HDFS NAMENODE
+  ###########################
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    environment:
+      CLUSTER_NAME: "hadoop-cluster"
+      CORE_CONF_fs_defaultFS: "hdfs://namenode:9000"
+    volumes:
+      - namenode:/hadoop/dfs/name
+    ports:
+      - "9870:9870"   # Web UI
+    networks:
+      - bigdata
+
+  ###########################
+  #     HDFS DATANODE 1
+  ###########################
+  datanode1:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    depends_on: [namenode]
+    environment:
+      CORE_CONF_fs_defaultFS: "hdfs://namenode:9000"
+    volumes:
+      - datanode1:/hadoop/dfs/data
+    networks:
+      - bigdata
+
+  ###########################
+  #     HDFS DATANODE 2
+  ###########################
+  datanode2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    depends_on: [namenode]
+    environment:
+      CORE_CONF_fs_defaultFS: "hdfs://namenode:9000"
+    volumes:
+      - datanode2:/hadoop/dfs/data
+    networks:
+      - bigdata
+
+networks:
+  bigdata:
+
+volumes:
+  namenode:
+  datanode1:
+  datanode2:
