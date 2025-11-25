@@ -15,6 +15,8 @@ This project demonstrates a complete data pipeline:
 3. Python consumer writes messages to HDFS in date-partitioned JSON files.
 4. Flask frontend reads data from HDFS through WebHDFS and visualizes it in real time.
 
+![WhatsApp Image 2025-11-25 at 14 32 30_b221c03a](https://github.com/user-attachments/assets/dcd09ff0-09c0-45c4-a8c3-10520f52bcd4)
+
 Architecture
 ------------
 Android → Kafka → Python Consumer → HDFS → Flask API → Chart.js Frontend
@@ -67,4 +69,5 @@ Troubleshooting
 No chart data: check API response.
 HDFS file not found: verify directory exists.
 Timestamps off: frontend normalizes device timestamps.
+
 
