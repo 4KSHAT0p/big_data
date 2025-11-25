@@ -5,6 +5,9 @@ Iot Sensor Data Analysis in Real Time:
 || IoT → Kafka → HDFS → Frontend ||
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+![picture](https://github.com/user-attachments/assets/89fee129-194e-43a5-bad3-0fd39d276215)
+
+
 This repository contains a small end-to-end demo that reads sensor data from an Android device, publishes it to Kafka, persists messages into HDFS, and serves a simple Flask frontend that reads stored JSON files from HDFS and visualizes accelerometer and gyroscope values using Chart.js.
 
 Overview
@@ -67,6 +70,7 @@ Troubleshooting
 No chart data: check API response.
 HDFS file not found: verify directory exists.
 Timestamps off: frontend normalizes device timestamps.
+
 
 
 
