@@ -63,11 +63,15 @@ curl http://localhost:5000/api/latest_file_points?count=20
 HDFS Check:
 curl 'http://namenode:9870/webhdfs/v1/iot/sensors?op=LISTSTATUS'
 
+![picture](https://github.com/user-attachments/assets/414b4ae2-1c44-4d0e-9f31-baf2d43dcf95)
+
+
 Troubleshooting
 ---------------
 No chart data: check API response.
 HDFS file not found: verify directory exists.
 Timestamps off: frontend normalizes device timestamps.
+
 
 
 
